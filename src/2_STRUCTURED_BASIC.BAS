@@ -1,5 +1,5 @@
-LET X_SIZE = 5
-LET Y_SIZE = 5
+CONST X_SIZE = 5
+CONST Y_SIZE = 5
 
 DO
 
