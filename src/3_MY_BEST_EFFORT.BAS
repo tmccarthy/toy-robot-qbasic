@@ -29,6 +29,8 @@ DO
 
   DIM proposed_robot AS ROBOT
 
+  proposed_robot = robot
+
   LINE INPUT raw_command$
 
   IF is_place_command(raw_command$) THEN
@@ -41,7 +43,7 @@ DO
     ELSEIF raw_command$ = "RIGHT" THEN
       proposed_robot.facing = rotate$(robot.facing, DIRECTION_RIGHT)
     ELSEIF raw_command$ = "REPORT" THEN
-      PRINT X "," Y "," FACING$
+      PRINT robot.position.x "," robot.position.y "," robot.facing
     END IF
   END IF
 
@@ -60,7 +62,7 @@ FUNCTION is_place_command(raw_command$)
     EXIT FUNCTION
   END IF
 
-  IF (LEN(raw_command$) <> 15 AND LEN(raw_command$) <> 14) OR MID$(raw_command$, 8, 1) <> ";" OR MID$(raw_command$, 10, 1) <> ";" THEN
+  IF (LEN(raw_command$) <> 15 AND LEN(raw_command$) <> 14) OR MID$(raw_command$, 8, 1) <> "," OR MID$(raw_command$, 10, 1) <> "," THEN
     is_place_command = FALSE
     EXIT FUNCTION
   END IF
@@ -79,9 +81,9 @@ END FUNCTION
 SUB ROBOT_FROM_PLACE_COMMAND (raw_place_command$, empty_robot AS ROBOT)
 
   empty_robot.placed = TRUE
-  empty_robot.position.x = VAL(MID$(raw_command$, 7, 1))
+  empty_robot.position.x = VAL(MID$(raw_place_command$, 7, 1))
   empty_robot.position.y = VAL(MID$(raw_place_command$, 9, 1))
-  empty_robot.facing = MID$(COMM$, 11, 5)
+  empty_robot.facing = MID$(raw_place_command$, 11, 5)
 
 END SUB
 
@@ -111,26 +113,30 @@ END SUB
 
 FUNCTION rotate$(direction$, rotation$)
 
+  trimmed_direction$ = RTRIM$(direction$)
+
   IF rotation$ = DIRECTION_LEFT THEN
-    IF direction$ = NORTH THEN
-      rotate$ = WEST
-    ELSEIF direction$ = SOUTH THEN
-      rotate$ = EAST
-    ELSEIF direction$ = EAST THEN
-      rotate$ = NORTH
-    ELSEIF direction$ = WEST THEN
-      rotate$ = SOUTH
+    IF trimmed_direction$ = NORTH THEN
+      returned_direction$ = WEST
+    ELSEIF trimmed_direction$ = SOUTH THEN
+      returned_direction$ = EAST
+    ELSEIF trimmed_direction$ = EAST THEN
+      returned_direction$ = NORTH
+    ELSEIF trimmed_direction$ = WEST THEN
+      returned_direction$ = SOUTH
     END IF
   ELSEIF rotation$ = DIRECTION_RIGHT THEN
-    IF direction$ = NORTH THEN
-      rotate$ = WEST
-    ELSEIF direction$ = SOUTH THEN
-      rotate$ = EAST
-    ELSEIF direction$ = EAST THEN
-      rotate$ = NORTH
-    ELSEIF direction$ = WEST THEN
-      rotate$ = SOUTH
+    IF trimmed_direction$ = NORTH THEN
+      returned_direction$ = WEST
+    ELSEIF trimmed_direction$ = SOUTH THEN
+      returned_direction$ = EAST
+    ELSEIF trimmed_direction$ = EAST THEN
+      returned_direction$ = NORTH
+    ELSEIF trimmed_direction$ = WEST THEN
+      returned_direction$ = SOUTH
     END IF
   END IF
+
+  rotate$ = returned_direction$
 
 END FUNCTION
