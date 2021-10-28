@@ -37,11 +37,11 @@ DO
     ROBOT_FROM_PLACE_COMMAND raw_command$, proposed_robot
   ELSEIF robot.placed THEN
     IF raw_command$ = "MOVE" THEN
-      TRANSLATE robot.position, robot.facing, proposed_robot.position
+      TRANSLATE robot.position, facing_from_robot(robot), proposed_robot.position
     ELSEIF raw_command$ = "LEFT" THEN
-      proposed_robot.facing = rotate$(robot.facing, DIRECTION_LEFT)
+      proposed_robot.facing = rotate$(facing_from_robot(robot), DIRECTION_LEFT)
     ELSEIF raw_command$ = "RIGHT" THEN
-      proposed_robot.facing = rotate$(robot.facing, DIRECTION_RIGHT)
+      proposed_robot.facing = rotate$(facing_from_robot(robot), DIRECTION_RIGHT)
     ELSEIF raw_command$ = "REPORT" THEN
       PRINT robot.position.x "," robot.position.y "," robot.facing
     END IF
@@ -113,30 +113,35 @@ END SUB
 
 FUNCTION rotate$(direction$, rotation$)
 
-  trimmed_direction$ = RTRIM$(direction$)
-
   IF rotation$ = DIRECTION_LEFT THEN
-    IF trimmed_direction$ = NORTH THEN
+    IF direction$ = NORTH THEN
       returned_direction$ = WEST
-    ELSEIF trimmed_direction$ = SOUTH THEN
+    ELSEIF direction$ = SOUTH THEN
       returned_direction$ = EAST
-    ELSEIF trimmed_direction$ = EAST THEN
+    ELSEIF direction$ = EAST THEN
       returned_direction$ = NORTH
-    ELSEIF trimmed_direction$ = WEST THEN
+    ELSEIF direction$ = WEST THEN
       returned_direction$ = SOUTH
     END IF
   ELSEIF rotation$ = DIRECTION_RIGHT THEN
-    IF trimmed_direction$ = NORTH THEN
+    IF direction$ = NORTH THEN
       returned_direction$ = WEST
-    ELSEIF trimmed_direction$ = SOUTH THEN
+    ELSEIF direction$ = SOUTH THEN
       returned_direction$ = EAST
-    ELSEIF trimmed_direction$ = EAST THEN
+    ELSEIF direction$ = EAST THEN
       returned_direction$ = NORTH
-    ELSEIF trimmed_direction$ = WEST THEN
+    ELSEIF direction$ = WEST THEN
       returned_direction$ = SOUTH
     END IF
   END IF
 
   rotate$ = returned_direction$
+
+END FUNCTION
+
+'Trims since the STRING is 5 chars always
+FUNCTION facing_from_robot$(robot AS ROBOT)
+
+facing_from_robot$ = RTRIM$(robot.facing)
 
 END FUNCTION

@@ -6,12 +6,15 @@ DO
   INPUT COMM$
 
   IF LEFT$(COMM$, 5) = "PLACE" THEN
+    'Check that the command is of the correct structure
     IF (LEN(COMM$) <> 15 AND LEN(COMM$) <> 14) OR MID$(COMM$, 8, 1) <> ";" OR MID$(COMM$, 10, 1) <> ";" GOTO continue
     LET X_BUFFER = VAL(MID$(COMM$, 7, 1))
     LET Y_BUFFER = VAL(MID$(COMM$, 9, 1))
     LET FACING_BUFFER$ = MID$(COMM$, 11, 5)
 
+    'Check that the position is valid
     IF X_BUFFER < 0 OR X_BUFFER > (X_SIZE - 1) OR Y_BUFFER < 0 OR Y_BUFFER > (Y_SIZE - 1) GOTO continue
+    'Check that the direction is valid
     IF NOT (FACING_BUFFER$ = "NORTH" OR FACING_BUFFER$ = "SOUTH" OR FACING_BUFFER$ = "EAST" OR FACING_BUFFER$ = "WEST") GOTO continue
 
     LET X = X_BUFFER
