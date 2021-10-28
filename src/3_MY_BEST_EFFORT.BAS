@@ -33,14 +33,14 @@ DO
 
   IF is_place_command(raw_command$) THEN
     ROBOT_FROM_PLACE_COMMAND raw_command$, proposed_robot
-  ELSE IF robot.placed THEN
+  ELSEIF robot.placed THEN
     IF raw_command$ = "MOVE" THEN
       TRANSLATE robot.position, robot.facing, proposed_robot.position
-    ELSE IF raw_command$ = "LEFT" THEN
+    ELSEIF raw_command$ = "LEFT" THEN
       proposed_robot.facing = rotate$(robot.facing, DIRECTION_LEFT)
-    ELSE IF raw_command$ = "RIGHT" THEN
+    ELSEIF raw_command$ = "RIGHT" THEN
       proposed_robot.facing = rotate$(robot.facing, DIRECTION_RIGHT)
-    ELSE IF raw_command$ = "REPORT" THEN
+    ELSEIF raw_command$ = "REPORT" THEN
       PRINT X "," Y "," FACING$
     END IF
   END IF
@@ -55,82 +55,82 @@ END
 
 FUNCTION is_place_command(raw_command$)
 
-IF LEFT$(raw_command, 5) <> "PLACE"
-  is_place_command = FALSE
-  EXIT FUNCTION
-END IF
+  IF LEFT$(raw_command$, 5) <> "PLACE" THEN
+    is_place_command = FALSE
+    EXIT FUNCTION
+  END IF
 
-IF (LEN(COMM$) <> 15 AND LEN(COMM$) <> 14) OR MID$(COMM$, 8, 1) <> ";" OR MID$(COMM$, 10, 1) <> ";"
-  is_place_command = FALSE
-  EXIT FUNCTION
-END IF
+  IF (LEN(raw_command$) <> 15 AND LEN(raw_command$) <> 14) OR MID$(raw_command$, 8, 1) <> ";" OR MID$(raw_command$, 10, 1) <> ";" THEN
+    is_place_command = FALSE
+    EXIT FUNCTION
+  END IF
 
-direction_value = MID$(COMM$, 11, 5)
+  direction_value$ = MID$(raw_command$, 11, 5)
 
-IF NOT (direction_value$ = NORTH OR direction_value$ = SOUTH OR direction_value$ = EAST OR direction_value$ = WEST)
-  is_place_command = FALSE
-  EXIT FUNCTION
-END IF
+  IF NOT (direction_value$ = NORTH OR direction_value$ = SOUTH OR direction_value$ = EAST OR direction_value$ = WEST) THEN
+    is_place_command = FALSE
+    EXIT FUNCTION
+  END IF
 
-is_place_command = TRUE
+  is_place_command = TRUE
 
 END FUNCTION
 
 SUB ROBOT_FROM_PLACE_COMMAND (raw_place_command$, empty_robot AS ROBOT)
 
-empty_robot.placed = TRUE
-empty_robot.position.x = VAL(MID$(raw_command$, 7, 1))
-empty_robot.position.y = VAL(MID$(COMM$, 9, 1))
-empty_robot.facing = MID$(COMM$, 11, 5)
+  empty_robot.placed = TRUE
+  empty_robot.position.x = VAL(MID$(raw_command$, 7, 1))
+  empty_robot.position.y = VAL(MID$(raw_place_command$, 9, 1))
+  empty_robot.facing = MID$(COMM$, 11, 5)
 
 END SUB
 
 FUNCTION is_within_bounds(position AS POSITION)
 
-is_within_bounds = position.x >= 0 AND position.x < X_SIZE AND position.y >= 0 AND position.y < Y_SIZE
+  is_within_bounds = position.x >= 0 AND position.x < X_SIZE AND position.y >= 0 AND position.y < Y_SIZE
 
 END FUNCTION
 
 SUB TRANSLATE (position AS POSITION, direction$, empty_position AS POSITION)
 
-IF direction$ = NORTH THEN
-  empty_position.x = position.x
-  empty_position.y = position.y + 1
-ELSEIF direction$ = SOUTH THEN
-  empty_position.x = position.x
-  empty_position.y = position.y - 1
-ELSEIF direction$ = EAST THEN
-  empty_position.x = position.x + 1
-  empty_position.y = position.y
-ELSEIF direction$ = WEST THEN
-  empty_position.x = position.x - 1
-  empty_position.y = position.y
-END IF
+  IF direction$ = NORTH THEN
+    empty_position.x = position.x
+    empty_position.y = position.y + 1
+  ELSEIF direction$ = SOUTH THEN
+    empty_position.x = position.x
+    empty_position.y = position.y - 1
+  ELSEIF direction$ = EAST THEN
+    empty_position.x = position.x + 1
+    empty_position.y = position.y
+  ELSEIF direction$ = WEST THEN
+    empty_position.x = position.x - 1
+    empty_position.y = position.y
+  END IF
 
 END SUB
 
 FUNCTION rotate$(direction$, rotation$)
 
-IF rotation$ = DIRECTION_LEFT THEN
-  IF direction$ = NORTH THEN
-    rotate$ = WEST
-  ELSE IF direction$ = SOUTH THEN
-    rotate$ = EAST
-  ELSE IF direction$ = EAST THEN
-    rotate$ = NORTH
-  ELSE IF direction$ = WEST THEN
-    rotate$ = SOUTH
+  IF rotation$ = DIRECTION_LEFT THEN
+    IF direction$ = NORTH THEN
+      rotate$ = WEST
+    ELSEIF direction$ = SOUTH THEN
+      rotate$ = EAST
+    ELSEIF direction$ = EAST THEN
+      rotate$ = NORTH
+    ELSEIF direction$ = WEST THEN
+      rotate$ = SOUTH
+    END IF
+  ELSEIF rotation$ = DIRECTION_RIGHT THEN
+    IF direction$ = NORTH THEN
+      rotate$ = WEST
+    ELSEIF direction$ = SOUTH THEN
+      rotate$ = EAST
+    ELSEIF direction$ = EAST THEN
+      rotate$ = NORTH
+    ELSEIF direction$ = WEST THEN
+      rotate$ = SOUTH
+    END IF
   END IF
-ELSE IF rotation = DIRECTION_RIGHT THEN
-  IF direction$ = NORTH THEN
-    rotate$ = WEST
-  ELSE IF direction$ = SOUTH THEN
-    rotate$ = EAST
-  ELSE IF direction$ = EAST THEN
-    rotate$ = NORTH
-  ELSE IF direction$ = WEST THEN
-    rotate$ = SOUTH
-  END IF
-END IF
 
 END FUNCTION
